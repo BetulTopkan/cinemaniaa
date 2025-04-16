@@ -72,12 +72,26 @@ export function header() {
       }
     }
 
-    // Sayfa butonuna tıklanınca, aktif sayfa bilgisini sakla
+    // Sayfa butonuna tıklanınca, aktif sayfa bilgisini sakla ve history state'i güncelle
     navLinks.forEach((link) => {
-      link.addEventListener("click", function () {
+      link.addEventListener("click", function (e) {
+        e.preventDefault();
         const href = link.getAttribute("href");
-        localStorage.setItem("activePage", href); // Tıklanan sayfa bilgisini sakla
+        localStorage.setItem("activePage", href);
+
+        // History state'i güncelle
+        window.history.pushState({ path: href }, "", href);
+
+        // Sayfayı yükle
+        window.location.href = href;
       });
+    });
+
+    // Geri tuşu olayını dinle
+    window.addEventListener("popstate", function (event) {
+      if (event.state && event.state.path) {
+        window.location.href = event.state.path;
+      }
     });
   });
 }
